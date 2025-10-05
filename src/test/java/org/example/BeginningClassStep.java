@@ -66,17 +66,23 @@ public class BeginningClassStep {
 
     @Before
     public void setUp(Scenario scenario) {
+        // Перезагружаем properties перед каждым тестом
+        reloadProperties();
+        
+        String browserType = getProperty("type.browser", BROWSER_CHROME);
+        String driverType = getProperty("type.driver", "remote");
+        
         System.out.println("========================================");
         System.out.println("Starting scenario: " + scenario.getName());
-        System.out.println("type.driver = " + props.getProperty("type.driver"));
-        System.out.println("type.browser = " + props.getProperty("type.browser"));
-        System.out.println("selenoid.hub.url = " + props.getProperty("selenoid.hub.url"));
+        System.out.println("type.driver = " + driverType);
+        System.out.println("type.browser = " + browserType);
+        System.out.println("Operating System: " + getOperatingSystem());
         System.out.println("========================================");
 
-        if ("remote".equalsIgnoreCase(props.getProperty("type.driver"))) {
-            initRemoteDriver();
+        if ("remote".equalsIgnoreCase(driverType)) {
+            initRemoteDriver(browserType);
         } else {
-            initLocalDriver();
+            initLocalDriver(browserType);
         }
     }
 
@@ -88,7 +94,7 @@ public class BeginningClassStep {
         }
 
         try {
-            String pageUrl = (url != null && !url.isEmpty()) ? url : props.getProperty("base.url");
+            String pageUrl = (url != null && !url.isEmpty()) ? url : getProperty("base.url", "http://217.74.37.176/?route=account/register&language=ru-ru");
             System.out.println("Открываем страницу: " + pageUrl);
             driver.get(pageUrl);
 
@@ -200,14 +206,39 @@ public class BeginningClassStep {
     }
 
     /**
+     * Получение свойства: сначала системные, потом из properties файла
+     */
+    private String getProperty(String key, String defaultValue) {
+        // Сначала проверяем системные свойства (из Maven -D параметров)
+        String systemProperty = System.getProperty(key);
+        if (systemProperty != null && !systemProperty.isEmpty()) {
+            return systemProperty;
+        }
+        // Если нет системных свойств, используем из файла
+        return props.getProperty(key, defaultValue);
+    }
+
+    /**
+     * Перезагрузка properties перед каждым тестом
+     */
+    private void reloadProperties() {
+        try (InputStream input = BeginningClassStep.class.getClassLoader().getResourceAsStream("application.properties")) {
+            if (input != null) {
+                props.load(input);
+            }
+        } catch (Exception e) {
+            System.err.println("Error reloading properties: " + e.getMessage());
+        }
+    }
+
+    /**
      * Инициализация удаленного драйвера через Selenoid
      */
-    private void initRemoteDriver() {
+    private void initRemoteDriver(String browserType) {
         try {
             System.out.println("Инициализация удаленного драйвера...");
 
-            String browserType = props.getProperty("type.browser", BROWSER_CHROME);
-            String selenoidHubUrl = props.getProperty("selenoid.hub.url");
+            String selenoidHubUrl = getProperty("selenoid.hub.url", "http://jenkins.applineselenoid.fvds.ru:4444/wd/hub");
 
             System.out.println("Подключаемся к Selenoid: " + selenoidHubUrl);
             System.out.println("Браузер: " + browserType);
@@ -221,20 +252,19 @@ public class BeginningClassStep {
         } catch (Exception e) {
             System.err.println("Ошибка инициализации удаленного драйвера: " + e.getMessage());
             System.err.println("Пробуем инициализировать локальный драйвер...");
-            initLocalDriver();
+            initLocalDriver(browserType);
         }
     }
 
     /**
      * Инициализация локального драйвера с интеллектуальным fallback
      */
-    private void initLocalDriver() {
-        String originalBrowser = props.getProperty("type.browser", BROWSER_CHROME);
+    private void initLocalDriver(String originalBrowser) {
         String currentBrowser = originalBrowser;
         boolean fallbackUsed = false;
 
         try {
-            System.out.println("Попытка инициализации локального " + originalBrowser + " драйвера...");
+            System.out.println("Попытка инициализации локального " + originalBrowser + " драйвера на " + getOperatingSystem() + "...");
 
             while (true) {
                 try {
@@ -265,23 +295,23 @@ public class BeginningClassStep {
 
                 } catch (SessionNotCreatedException | IllegalArgumentException e) {
                     if (currentBrowser.equals(BROWSER_CHROME)) {
+                        System.err.println("💥 Chrome также недоступен: " + e.getMessage());
                         throw new RuntimeException("Chrome также недоступен: " + e.getMessage(), e);
                     }
 
                     System.err.println("❌ " + currentBrowser + " недоступен: " + e.getMessage());
 
-                    // Переход на Chrome
+                    // Fallback на Chrome
                     currentBrowser = BROWSER_CHROME;
                     fallbackUsed = true;
                     System.out.println("🔄 Переключаемся на Chrome...");
 
-                    // Небольшая пауза перед повторной попыткой
-                    sleep(500);
+                    sleep(1000);
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("Ошибка инициализации локального драйвера: " + e.getMessage());
+            System.err.println("💥 Критическая ошибка инициализации локального драйвера: " + e.getMessage());
             throw new RuntimeException("Не удалось инициализировать ни один драйвер", e);
         }
     }
@@ -292,16 +322,36 @@ public class BeginningClassStep {
     private void setupDriverPath(String browserType) {
         System.out.println("Автоматическая настройка драйвера для: " + browserType);
 
-        switch (browserType.toLowerCase()) {
-            case BROWSER_CHROME:
-                WebDriverManager.chromedriver().setup();
-                break;
-            case BROWSER_FIREFOX:
-                WebDriverManager.firefoxdriver().setup();
-                break;
-            case BROWSER_EDGE:
-                WebDriverManager.edgedriver().setup();
-                break;
+        try {
+            switch (browserType.toLowerCase()) {
+                case BROWSER_CHROME:
+                    WebDriverManager.chromedriver().setup();
+                    break;
+                case BROWSER_FIREFOX:
+                    WebDriverManager.firefoxdriver().setup();
+                    break;
+                case BROWSER_EDGE:
+                    WebDriverManager.edgedriver().setup();
+                    break;
+            }
+            System.out.println("✅ WebDriverManager успешно настроил драйвер для " + browserType);
+        } catch (Exception e) {
+            System.err.println("❌ Ошибка WebDriverManager для " + browserType + ": " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Определение операционной системы
+     */
+    private String getOperatingSystem() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("win")) {
+            return "Windows";
+        } else if (os.contains("mac")) {
+            return "Mac";
+        } else {
+            return "Linux";
         }
     }
 
@@ -326,12 +376,18 @@ public class BeginningClassStep {
      */
     private ChromeOptions createChromeOptions(boolean forRemote) {
         ChromeOptions options = new ChromeOptions();
+        
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--window-size=1920,1080");
         options.addArguments("--disable-blink-features=AutomationControlled");
         options.addArguments("--disable-extensions");
         options.addArguments("--disable-gpu");
+        
+        // Headless для Linux
+        if (getOperatingSystem().equals("Linux") && !forRemote) {
+            options.addArguments("--headless");
+        }
 
         if (forRemote) {
             Map<String, Object> selenoidOptions = createSelenoidOptions();
@@ -349,6 +405,12 @@ public class BeginningClassStep {
      */
     private FirefoxOptions createFirefoxOptions(boolean forRemote) {
         FirefoxOptions options = new FirefoxOptions();
+        
+        // Headless для Linux
+        if (getOperatingSystem().equals("Linux") && !forRemote) {
+            options.addArguments("--headless");
+        }
+        
         options.addArguments("--width=1920");
         options.addArguments("--height=1080");
 
@@ -401,20 +463,20 @@ public class BeginningClassStep {
      * Получение версии браузера
      */
     private String getBrowserVersion() {
-        return props.getProperty("browser.version", "");
+        return getProperty("browser.version", "");
     }
 
     /**
      * Инициализация настроек драйвера
      */
     private void initializeDriverSettings() {
-        int waitTime = Integer.parseInt(props.getProperty("implicitly.wait", "5"));
+        int waitTime = Integer.parseInt(getProperty("implicitly.wait", "5"));
         wait = new WebDriverWait(driver, Duration.ofSeconds(waitTime));
 
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(waitTime));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(
-                Integer.parseInt(props.getProperty("page.load.timeout", "10"))
+                Integer.parseInt(getProperty("page.load.timeout", "10"))
         ));
     }
 }
