@@ -1,0 +1,387 @@
+{
+  "uuid": "7a0a1104-0d5c-4067-9d22-98b5ceb083e1",
+  "historyId": "b2d2bc4b31f16f3cc5836447885b32f7",
+  "fullName": "src/test/resources/features/cucumber.feature:30",
+  "labels": [
+    {
+      "name": "tag",
+      "value": "all"
+    },
+    {
+      "name": "tag",
+      "value": "correct"
+    },
+    {
+      "name": "tag",
+      "value": "Test=3"
+    },
+    {
+      "name": "host",
+      "value": "DESKTOP-4GVGGCH"
+    },
+    {
+      "name": "thread",
+      "value": "21872@DESKTOP-4GVGGCH.main(1)"
+    },
+    {
+      "name": "feature",
+      "value": "Регистрация"
+    },
+    {
+      "name": "story",
+      "value": "Успешная регистрация - сценарий 1"
+    },
+    {
+      "name": "suite",
+      "value": "Регистрация"
+    },
+    {
+      "name": "testClass",
+      "value": "Успешная регистрация - сценарий 1"
+    },
+    {
+      "name": "framework",
+      "value": "cucumber4jvm"
+    },
+    {
+      "name": "language",
+      "value": "java"
+    },
+    {
+      "name": "gherkin_uri",
+      "value": "file:///D:/java%20project/CI_CD/src/test/resources/features/cucumber.feature"
+    },
+    {
+      "name": "package",
+      "value": "src.test.resources.features.cucumber_feature.Регистрация"
+    }
+  ],
+  "links": [],
+  "name": "Успешная регистрация - сценарий 1",
+  "status": "passed",
+  "stage": "finished",
+  "steps": [
+    {
+      "name": "*  открыта страница opencart: \"http://217.74.37.176/?route=account/register&language=ru-ru\"",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Открытие страницы: http://217.74.37.176/?route=account/register&language=ru-ru",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [],
+          "attachments": [],
+          "parameters": [
+            {
+              "name": "url",
+              "value": "http://217.74.37.176/?route=account/register&language=ru-ru"
+            }
+          ],
+          "start": 1759686966995,
+          "stop": 1759686971212
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686966995,
+      "stop": 1759686971212
+    },
+    {
+      "name": "*  поле Имя заполняется значением \"Татьяна\"",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Заполнение поля Имя значением: Татьяна",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [
+            {
+              "name": "Скролл до элемента",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "element",
+                  "value": "[[EdgeDriver: MicrosoftEdge on windows (1022c8c4f380dd16e9984e1670b3e258)] -> xpath: //button[normalize-space()='Продолжить' or @id='button-register' or @type='submit'] | //input[@value='Продолжить' or @id='button-register' or @type='submit']]"
+                }
+              ],
+              "start": 1759686971224,
+              "stop": 1759686972239
+            },
+            {
+              "name": "Ввод текста: Татьяна",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "locator",
+                  "value": "By.cssSelector: input[name='firstname'], input[placeholder='Имя'], input[placeholder='First Name']"
+                },
+                {
+                  "name": "text",
+                  "value": "Татьяна"
+                }
+              ],
+              "start": 1759686972239,
+              "stop": 1759686972334
+            }
+          ],
+          "attachments": [],
+          "parameters": [
+            {
+              "name": "str",
+              "value": "Татьяна"
+            }
+          ],
+          "start": 1759686971212,
+          "stop": 1759686972334
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686971212,
+      "stop": 1759686972334
+    },
+    {
+      "name": "*  поле Фамилия заполняется значением \"Миндалева\"",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Заполнение поля Фамилия значением: Миндалева",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [
+            {
+              "name": "Ввод текста: Миндалева",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "locator",
+                  "value": "By.cssSelector: input[name='lastname'], input[placeholder='Фамилия'], input[placeholder='Last Name']"
+                },
+                {
+                  "name": "text",
+                  "value": "Миндалева"
+                }
+              ],
+              "start": 1759686972334,
+              "stop": 1759686972414
+            }
+          ],
+          "attachments": [],
+          "parameters": [
+            {
+              "name": "str",
+              "value": "Миндалева"
+            }
+          ],
+          "start": 1759686972334,
+          "stop": 1759686972414
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686972334,
+      "stop": 1759686972414
+    },
+    {
+      "name": "*  поле E-Mail заполняется значением \"mimiill231@mail.ru\"",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Заполнение поля E-Mail значением: mimiill231@mail.ru",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [
+            {
+              "name": "Ввод текста: mimiill231@mail.ru",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "locator",
+                  "value": "By.cssSelector: input[name='email'], input[placeholder='E-Mail'], input[type='email']"
+                },
+                {
+                  "name": "text",
+                  "value": "mimiill231@mail.ru"
+                }
+              ],
+              "start": 1759686972414,
+              "stop": 1759686972493
+            }
+          ],
+          "attachments": [],
+          "parameters": [
+            {
+              "name": "str",
+              "value": "mimiill231@mail.ru"
+            }
+          ],
+          "start": 1759686972414,
+          "stop": 1759686972493
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686972414,
+      "stop": 1759686972493
+    },
+    {
+      "name": "*  поле Пароль заполняется значением \"sP5@rT&9kL#m2$fJ0\"",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Заполнение поля Пароль значением: sP5@rT&9kL#m2$fJ0",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [
+            {
+              "name": "Ввод текста: sP5@rT&9kL#m2$fJ0",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "locator",
+                  "value": "By.cssSelector: input[name='password'], input[placeholder='Пароль'], input[placeholder='Password']"
+                },
+                {
+                  "name": "text",
+                  "value": "sP5@rT&9kL#m2$fJ0"
+                }
+              ],
+              "start": 1759686972494,
+              "stop": 1759686972581
+            }
+          ],
+          "attachments": [],
+          "parameters": [
+            {
+              "name": "str",
+              "value": "sP5@rT&9kL#m2$fJ0"
+            }
+          ],
+          "start": 1759686972493,
+          "stop": 1759686972581
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686972493,
+      "stop": 1759686972581
+    },
+    {
+      "name": "*  выполнено нажатие на кнопку соглашения с политикой конфиденциальности",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Соглашение с политикой конфиденциальности",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [],
+          "attachments": [],
+          "parameters": [],
+          "start": 1759686972581,
+          "stop": 1759686972633
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686972581,
+      "stop": 1759686972633
+    },
+    {
+      "name": "*  выполнено нажатие на кнопку Продолжить",
+      "status": "passed",
+      "statusDetails": {
+        "known": false,
+        "muted": false,
+        "flaky": false
+      },
+      "stage": "finished",
+      "steps": [
+        {
+          "name": "Нажатие на кнопку Продолжить",
+          "status": "passed",
+          "stage": "finished",
+          "steps": [
+            {
+              "name": "Клик по элементу",
+              "status": "passed",
+              "stage": "finished",
+              "steps": [],
+              "attachments": [],
+              "parameters": [
+                {
+                  "name": "locator",
+                  "value": "By.xpath: //button[normalize-space()='Продолжить' or @id='button-register' or @type='submit'] | //input[@value='Продолжить' or @id='button-register' or @type='submit']"
+                }
+              ],
+              "start": 1759686972633,
+              "stop": 1759686972691
+            }
+          ],
+          "attachments": [],
+          "parameters": [],
+          "start": 1759686972633,
+          "stop": 1759686972691
+        }
+      ],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686972633,
+      "stop": 1759686972692
+    }
+  ],
+  "attachments": [],
+  "parameters": [],
+  "start": 1759686966386,
+  "stop": 1759686974842
+}

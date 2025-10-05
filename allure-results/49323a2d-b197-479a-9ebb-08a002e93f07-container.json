@@ -1,0 +1,33 @@
+{
+  "uuid": "49323a2d-b197-479a-9ebb-08a002e93f07",
+  "name": "Сценарий: Неуспешная регистрация с несоглашением с политикой конфиденциальности",
+  "children": [
+    "8b1ff189-2ffb-4081-8b21-f1464fd468ca"
+  ],
+  "befores": [
+    {
+      "name": "org.example.BeginningClassStep.setUp(io.cucumber.java.Scenario)",
+      "status": "passed",
+      "stage": "finished",
+      "steps": [],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686958026,
+      "stop": 1759686958676
+    }
+  ],
+  "afters": [
+    {
+      "name": "org.example.BeginningClassStep.afterEachTest(io.cucumber.java.Scenario)",
+      "status": "passed",
+      "stage": "finished",
+      "steps": [],
+      "attachments": [],
+      "parameters": [],
+      "start": 1759686964261,
+      "stop": 1759686966380
+    }
+  ],
+  "start": 1759686958026,
+  "stop": 1759686966381
+}
