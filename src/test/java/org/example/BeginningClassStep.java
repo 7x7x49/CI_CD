@@ -29,11 +29,6 @@ public class BeginningClassStep {
     protected WebDriverWait wait;
     private static final Properties props = new Properties();
 
-    // Константы для ОС
-    private static final String OS_WINDOWS = "windows";
-    private static final String OS_MAC = "mac";
-    private static final String OS_LINUX = "linux";
-
     // Константы для браузеров
     private static final String BROWSER_CHROME = "chrome";
     private static final String BROWSER_FIREFOX = "firefox";
@@ -76,7 +71,6 @@ public class BeginningClassStep {
         System.out.println("type.driver = " + props.getProperty("type.driver"));
         System.out.println("type.browser = " + props.getProperty("type.browser"));
         System.out.println("selenoid.hub.url = " + props.getProperty("selenoid.hub.url"));
-        System.out.println("Operating System: " + getOperatingSystem());
         System.out.println("========================================");
 
         if ("remote".equalsIgnoreCase(props.getProperty("type.driver"))) {
@@ -271,24 +265,23 @@ public class BeginningClassStep {
 
                 } catch (SessionNotCreatedException | IllegalArgumentException e) {
                     if (currentBrowser.equals(BROWSER_CHROME)) {
-                        // Если уже пробуем Chrome и он не работает - критическая ошибка
                         throw new RuntimeException("Chrome также недоступен: " + e.getMessage(), e);
                     }
 
                     System.err.println("❌ " + currentBrowser + " недоступен: " + e.getMessage());
 
-                    // Fallback на Chrome
+                    // Переход на Chrome
                     currentBrowser = BROWSER_CHROME;
                     fallbackUsed = true;
                     System.out.println("🔄 Переключаемся на Chrome...");
 
                     // Небольшая пауза перед повторной попыткой
-                    sleep(1000);
+                    sleep(500);
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("💥 Критическая ошибка инициализации локального драйвера: " + e.getMessage());
+            System.err.println("Ошибка инициализации локального драйвера: " + e.getMessage());
             throw new RuntimeException("Не удалось инициализировать ни один драйвер", e);
         }
     }
@@ -297,7 +290,7 @@ public class BeginningClassStep {
      * Настройка пути к драйверу с помощью WebDriverManager
      */
     private void setupDriverPath(String browserType) {
-        System.out.println("Автоматическая настройка драйвера для: " + browserType + " на ОС: " + getOperatingSystem());
+        System.out.println("Автоматическая настройка драйвера для: " + browserType);
 
         switch (browserType.toLowerCase()) {
             case BROWSER_CHROME:
@@ -310,27 +303,6 @@ public class BeginningClassStep {
                 WebDriverManager.edgedriver().setup();
                 break;
         }
-    }
-
-    /**
-     * Определение операционной системы
-     */
-    private String getOperatingSystem() {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            return OS_WINDOWS;
-        } else if (os.contains("mac")) {
-            return OS_MAC;
-        } else {
-            return OS_LINUX;
-        }
-    }
-
-    /**
-     * Проверка Windows
-     */
-    private boolean isWindows() {
-        return getOperatingSystem().equals(OS_WINDOWS);
     }
 
     /**
@@ -377,8 +349,6 @@ public class BeginningClassStep {
      */
     private FirefoxOptions createFirefoxOptions(boolean forRemote) {
         FirefoxOptions options = new FirefoxOptions();
-        
-        // Простая настройка - пусть Selenium сам ищет Firefox
         options.addArguments("--width=1920");
         options.addArguments("--height=1080");
 
