@@ -15,6 +15,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 import java.net.URI;
 import java.time.Duration;
@@ -231,90 +232,84 @@ public class BeginningClassStep {
     }
 
     /**
-     * Инициализация локального драйвера
+     * Инициализация локального драйвера с интеллектуальным fallback
      */
     private void initLocalDriver() {
+        String originalBrowser = props.getProperty("type.browser", BROWSER_CHROME);
+        String currentBrowser = originalBrowser;
+        boolean fallbackUsed = false;
+
         try {
-            String browserType = props.getProperty("type.browser", BROWSER_CHROME);
-            System.out.println("Инициализация локального " + browserType + " драйвера...");
+            System.out.println("Попытка инициализации локального " + originalBrowser + " драйвера...");
 
-            setupDriverPath(browserType);
+            while (true) {
+                try {
+                    setupDriverPath(currentBrowser);
 
-            switch (browserType.toLowerCase()) {
-                case BROWSER_CHROME:
-                    driver = new ChromeDriver(createChromeOptions(false));
+                    switch (currentBrowser.toLowerCase()) {
+                        case BROWSER_CHROME:
+                            driver = new ChromeDriver(createChromeOptions(false));
+                            break;
+                        case BROWSER_FIREFOX:
+                            driver = new FirefoxDriver(createFirefoxOptions(false));
+                            break;
+                        case BROWSER_EDGE:
+                            driver = new EdgeDriver(createEdgeOptions(false));
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Неподдерживаемый браузер: " + currentBrowser);
+                    }
+
+                    initializeDriverSettings();
+
+                    if (fallbackUsed) {
+                        System.out.println("✅ Локальный " + currentBrowser + " драйвер успешно инициализирован (fallback с " + originalBrowser + ")");
+                    } else {
+                        System.out.println("✅ Локальный " + currentBrowser + " драйвер успешно инициализирован");
+                    }
                     break;
-                case BROWSER_FIREFOX:
-                    driver = new FirefoxDriver(createFirefoxOptions(false));
-                    break;
-                case BROWSER_EDGE:
-                    driver = new EdgeDriver(createEdgeOptions(false));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Неподдерживаемый браузер: " + browserType);
+
+                } catch (SessionNotCreatedException | IllegalArgumentException e) {
+                    if (currentBrowser.equals(BROWSER_CHROME)) {
+                        // Если уже пробуем Chrome и он не работает - критическая ошибка
+                        throw new RuntimeException("Chrome также недоступен: " + e.getMessage(), e);
+                    }
+
+                    System.err.println("❌ " + currentBrowser + " недоступен: " + e.getMessage());
+
+                    // Fallback на Chrome
+                    currentBrowser = BROWSER_CHROME;
+                    fallbackUsed = true;
+                    System.out.println("🔄 Переключаемся на Chrome...");
+
+                    // Небольшая пауза перед повторной попыткой
+                    sleep(1000);
+                }
             }
 
-            initializeDriverSettings();
-            System.out.println("Локальный " + browserType + " драйвер успешно инициализирован!");
-
         } catch (Exception e) {
-            System.err.println("Ошибка инициализации локального драйвера: " + e.getMessage());
-            throw new RuntimeException("Не удалось инициализировать драйвер", e);
+            System.err.println("💥 Критическая ошибка инициализации локального драйвера: " + e.getMessage());
+            throw new RuntimeException("Не удалось инициализировать ни один драйвер", e);
         }
     }
 
     /**
-     * Настройка пути к драйверу в зависимости от ОС и браузера
+     * Настройка пути к драйверу с помощью WebDriverManager
      */
     private void setupDriverPath(String browserType) {
-        String os = getOperatingSystem();
-        String driverPath = getDriverPath(os, browserType);
-
-        System.out.println("Операционная система: " + os);
-        System.out.println("Путь к драйверу: " + driverPath);
+        System.out.println("Автоматическая настройка драйвера для: " + browserType + " на ОС: " + getOperatingSystem());
 
         switch (browserType.toLowerCase()) {
             case BROWSER_CHROME:
-                System.setProperty("webdriver.chrome.driver", driverPath);
+                WebDriverManager.chromedriver().setup();
                 break;
             case BROWSER_FIREFOX:
-                System.setProperty("webdriver.gecko.driver", driverPath);
+                WebDriverManager.firefoxdriver().setup();
                 break;
             case BROWSER_EDGE:
-                System.setProperty("webdriver.edge.driver", driverPath);
+                WebDriverManager.edgedriver().setup();
                 break;
         }
-    }
-
-    /**
-     * Получение пути к драйверу
-     */
-    private String getDriverPath(String os, String browserType) {
-        String driverName = getDriverName(browserType);
-        return "src/test/resources/drivers/" + os + "/" + driverName;
-    }
-
-    /**
-     * Получение имени драйвера для браузера
-     */
-    private String getDriverName(String browserType) {
-        switch (browserType.toLowerCase()) {
-            case BROWSER_CHROME:
-                return "chromedriver" + getFileExtension();
-            case BROWSER_FIREFOX:
-                return "geckodriver" + getFileExtension();
-            case BROWSER_EDGE:
-                return "edgedriver" + getFileExtension();
-            default:
-                return "chromedriver" + getFileExtension();
-        }
-    }
-
-    /**
-     * Получение расширения файла для ОС
-     */
-    private String getFileExtension() {
-        return isWindows() ? ".exe" : "";
     }
 
     /**
@@ -382,6 +377,8 @@ public class BeginningClassStep {
      */
     private FirefoxOptions createFirefoxOptions(boolean forRemote) {
         FirefoxOptions options = new FirefoxOptions();
+        
+        // Простая настройка - пусть Selenium сам ищет Firefox
         options.addArguments("--width=1920");
         options.addArguments("--height=1080");
 
