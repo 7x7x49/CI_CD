@@ -287,31 +287,31 @@ public class BeginningClassStep {
                     initializeDriverSettings();
 
                     if (fallbackUsed) {
-                        System.out.println("✅ Локальный " + currentBrowser + " драйвер успешно инициализирован (fallback с " + originalBrowser + ")");
+                        System.out.println("Локальный " + currentBrowser + " драйвер успешно инициализирован (fallback с " + originalBrowser + ")");
                     } else {
-                        System.out.println("✅ Локальный " + currentBrowser + " драйвер успешно инициализирован");
+                        System.out.println("Локальный " + currentBrowser + " драйвер успешно инициализирован");
                     }
                     break;
 
                 } catch (SessionNotCreatedException | IllegalArgumentException e) {
                     if (currentBrowser.equals(BROWSER_CHROME)) {
-                        System.err.println("💥 Chrome также недоступен: " + e.getMessage());
+                        System.err.println("Chrome также недоступен: " + e.getMessage());
                         throw new RuntimeException("Chrome также недоступен: " + e.getMessage(), e);
                     }
 
-                    System.err.println("❌ " + currentBrowser + " недоступен: " + e.getMessage());
+                    System.err.println(currentBrowser + " недоступен: " + e.getMessage());
 
                     // Fallback на Chrome
                     currentBrowser = BROWSER_CHROME;
                     fallbackUsed = true;
-                    System.out.println("🔄 Переключаемся на Chrome...");
+                    System.out.println("Переключаемся на Chrome...");
 
                     sleep(1000);
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("💥 Критическая ошибка инициализации локального драйвера: " + e.getMessage());
+            System.err.println("Ошибка инициализации локального драйвера: " + e.getMessage());
             throw new RuntimeException("Не удалось инициализировать ни один драйвер", e);
         }
     }
@@ -334,9 +334,9 @@ public class BeginningClassStep {
                     WebDriverManager.edgedriver().setup();
                     break;
             }
-            System.out.println("✅ WebDriverManager успешно настроил драйвер для " + browserType);
+            System.out.println("WebDriverManager успешно настроил драйвер для " + browserType);
         } catch (Exception e) {
-            System.err.println("❌ Ошибка WebDriverManager для " + browserType + ": " + e.getMessage());
+            System.err.println("Ошибка WebDriverManager для " + browserType + ": " + e.getMessage());
             throw e;
         }
     }
