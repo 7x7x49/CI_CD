@@ -5,7 +5,7 @@ node('unix') {
     
     stage('Run tests') {
         withMaven(globalMavenSettingsConfig: '', jdk: '', maven: 'Default', mavenSettingsConfig: '', traceability: true) {
-            sh 'mvn clean test -Dtype.browser=${browser}'
+            sh 'mvn clean test -Dtype.browser=${browser} -Dtype.driver=${driver}'
         }
     }
     
